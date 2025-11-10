@@ -1,0 +1,17 @@
+stages:
+  - deploy
+
+deploy_azure:
+  stage: deploy
+  image: mcr.microsoft.com/azure-cli:latest
+  before_script:
+    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+  script:
+    - az group create --name az104-rg4 --location eastus --tags lab=04
+    - echo "Previewing changes..."
+    - az deployment group what-if --resource-group az104-rg4 --template-file main.bicep
+    - az deployment group create --resource-group az104-rg4 --template-file main.bicep
+    - echo "Lab 04 deployed successfully!"
+    - az network vnet list -g az104-rg4 --output table
+  only:
+    - main
