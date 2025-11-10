@@ -1,0 +1,64 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# azure-pipelines.yml – Deploy Lab 04 with Bicep
+# Triggers on push to main
+# Uses: what-if → safe deploy → verify
+# ═══════════════════════════════════════════════════════════════════════════════
+
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  resourceGroupName: az104-rg4
+  location: eastus
+
+stages:
+  - stage: Deploy
+    displayName: 'Deploy Lab 04 - Bicep'
+    jobs:
+      - job: DeployBicep
+        displayName: 'Create RG + Deploy Bicep'
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Create Resource Group'
+            inputs:
+              azureSubscription: 'azure-sp'  # ← Your service connection
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az group create --name $(resourceGroupName) --location $(location) --tags lab=04
+
+          - task: AzureCLI@2
+            displayName: 'What-If Preview (Safety First)'
+            inputs:
+              azureSubscription: 'azure-sp'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                echo "Previewing changes..."
+                az deployment group what-if \
+                  --resource-group $(resourceGroupName) \
+                  --template-file main.bicep
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy Bicep Template'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: 'azure-sp'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(location)'
+              templateLocation: 'Linked artifact'
+              csmFile: 'main.bicep'
+              deploymentMode: 'Incremental'
+
+          - task: AzureCLI@2
+            displayName: 'Verify Deployment'
+            inputs:
+              azureSubscription: 'azure-sp'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                echo "Lab 04 deployed successfully!"
+                az network vnet list -g $(resourceGroupName) --output table

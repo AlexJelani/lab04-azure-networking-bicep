@@ -1,0 +1,14 @@
+# Azure
+*.bicepparam
+*.tfstate
+*.tfstate.backup
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
