@@ -33,7 +33,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'What-If Preview (Safety First)'
             inputs:
-              azureSubscription: 'azure-sp'
+              azureSubscription: 'az104-rg4'
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
@@ -46,7 +46,7 @@ stages:
             displayName: 'Deploy Bicep Template'
             inputs:
               deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: 'azure-sp'
+              azureResourceManagerConnection: 'az104-rg4'
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
@@ -56,7 +56,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Verify Deployment'
             inputs:
-              azureSubscription: 'azure-sp'
+              azureSubscription: 'az104-rg4'
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
