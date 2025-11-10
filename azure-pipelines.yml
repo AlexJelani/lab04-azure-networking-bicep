@@ -24,7 +24,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Create Resource Group'
             inputs:
-              azureSubscription: 'azure-sp'  # ← Your service connection
+              azureSubscription: 'az104-rg4'  # ← Your service connection
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
