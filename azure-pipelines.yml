@@ -7,8 +7,7 @@
 trigger:
   - main
 
-pool:
-  vmImage: ubuntu-latest
+pool: Default
 
 variables:
   resourceGroupName: az104-rg4
